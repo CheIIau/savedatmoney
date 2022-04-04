@@ -1,0 +1,11 @@
+{
+  "extends": "@quasar/app/tsconfig-preset",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "allowJs": true,
+    "sourceMap": true,
+    "noImplicitThis": true
+  },
+  "exclude": ["node_modules", "dist"]
+}

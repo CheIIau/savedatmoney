@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "sourceMap": true,
+    "noImplicitThis": true,
+    "baseUrl": ".",
+    "types": ["node", "express"],
+    "typeRoots": ["./server/types"]
+  },
+  "include": ["app.ts", "./*.ts", "./server/*.ts", "./server/types/index.d.ts"],
+  "exclude": ["node_modules", "dist", "src"]
+}
