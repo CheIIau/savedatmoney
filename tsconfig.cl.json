@@ -5,7 +5,8 @@
     "esModuleInterop": true,
     "allowJs": true,
     "sourceMap": true,
-    "noImplicitThis": true
+    "noImplicitThis": true,
+    "jsx": "preserve"
   },
   "exclude": ["node_modules", "dist"]
 }

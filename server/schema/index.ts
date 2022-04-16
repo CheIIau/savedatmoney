@@ -143,17 +143,27 @@ const RootMutationType = new GraphQLObjectType({
           if (!UserExpense) {
             return;
           }
-          const aBusyMonthsItem = UserExpense.busyMonths.find((item) => item.year === currentYear);
+          const aBusyMonthsItem = UserExpense.busyMonths.find(
+            (item) => item.year === currentYear,
+          );
           if (aBusyMonthsItem) {
-            const month = aBusyMonthsItem.months.find((month) => month === currentMonth);
+            const month = aBusyMonthsItem.months.find(
+              (month) => month === currentMonth,
+            );
             if (month === undefined) {
               await UsersExpensesModel.findOneAndUpdate(
-                { username: args.username as string, 'busyMonths.year': currentYear },
+                {
+                  username: args.username as string,
+                  'busyMonths.year': currentYear,
+                },
                 { $push: { 'busyMonths.$.months': currentMonth } },
               );
             }
           } else {
-            UserExpense.busyMonths.push({ year: currentYear, months: [currentMonth] });
+            UserExpense.busyMonths.push({
+              year: currentYear,
+              months: [currentMonth],
+            });
           }
           await UserExpense.save();
           return UserExpense;
@@ -169,17 +179,3 @@ export const Schema = new GraphQLSchema({
   query: RootQuery,
   mutation: RootMutationType,
 });
-
-// const categoryList = [
-//   { name: 'Супермаркеты' },
-//   { name: 'ЖКХ, связь, интернет' },
-//   { name: 'Автомобиль' },
-//   { name: 'Одежда и аксессуары' },
-//   { name: 'Здоровье и красота' },
-//   { name: 'Рестораны и кафе' },
-//   { name: 'Развлечения и хобби' },
-//   { name: 'Онлайн маркеты' },
-//   { name: 'Все для дома' },
-//   { name: 'Питомцы' },
-//   { name: 'Прочие расходы' },
-// ];

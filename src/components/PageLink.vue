@@ -13,11 +13,10 @@
 import { withDefaults, defineProps } from 'vue';
 
 interface Props {
-  title: string
-  link: string
-  icon: string
+  title: string;
+  link: string;
+  icon: string;
 }
 
-const props = withDefaults(defineProps<Props>(), { link: '/', icon: '/' })
-
+const props = withDefaults(defineProps<Props>(), { link: '/', icon: '/' });
 </script>

@@ -1,7 +1,12 @@
 mutation addExpense($username: String!, $quantity: Float!, $category: String!) {
   addExpense(username: $username, quantity: $quantity, category: $category) {
     expenses {
+      id
+      date
       quantity
+      category
+      month
+      year
     }
     busyMonths {
       year

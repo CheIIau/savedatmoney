@@ -1,12 +1,12 @@
 {
+  "singleAttributePerLine": true,
   "singleQuote": true,
   "semi": true,
-  "useTabs": false, 
-  "printWidth": 120, 
+  "useTabs": false,
+  "printWidth": 80,
   "tabWidth": 2,
   "trailingComma": "all",
   "bracketSpacing": true,
-  "jsxBracketSameLine": false,
   "wrapAttributes": true,
   "sortAttributes": true,
   "endOfLine": "auto"

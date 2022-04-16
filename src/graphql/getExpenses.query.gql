@@ -1,0 +1,13 @@
+query getExpenses($username: String!) {
+  expensesOfUser(username: $username) {
+    username
+    expenses {
+      id
+      date
+      quantity
+      category
+      month
+      year
+    }
+  }
+}

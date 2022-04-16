@@ -15,9 +15,9 @@ module.exports = {
     extraFileExtensions: ['.vue'],
     parser: '@typescript-eslint/parser',
     project: resolve(__dirname, './tsconfig.json'),
-    ignorePatterns: ["./server/*.d.ts"],
+    ignorePatterns: ['./server/*.d.ts'],
     tsconfigRootDir: __dirname,
-    ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
+    ecmaVersion: 2022, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module', // Allows for the use of imports
   },
 
@@ -56,11 +56,11 @@ module.exports = {
     quotes: ['warn', 'single', { avoidEscape: true }],
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
-    "@typescript-eslint/no-misused-promises": [
-      "error",
+    '@typescript-eslint/no-misused-promises': [
+      'error',
       {
-        "checksVoidReturn": false
-      }
+        checksVoidReturn: false,
+      },
     ],
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',

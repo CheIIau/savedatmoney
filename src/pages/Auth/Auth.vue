@@ -61,11 +61,21 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import { useQuasar, QForm } from 'quasar';
 import { ref } from 'vue';
-import { fetchRegister, fetchLogin, requestAuthHandler, AuthCredentials, storeUserData } from './Auth';
-
+import { useRouter } from 'vue-router';
+import {
+  fetchRegister,
+  fetchLogin,
+  requestAuthHandler,
+  AuthCredentials,
+  storeUserData,
+} from './Auth';
+const router = useRouter();
 const $q = useQuasar();
 
 const username = ref<string | null>(null);
@@ -76,7 +86,13 @@ const authForm = ref<QForm>();
 async function onRegister() {
   await authForm.value?.validate().then(async (success) => {
     if (accept.value && success && username.value && password.value) {
-      await requestAuthHandler(fetchRegister, username.value, password.value, $q);
+      await requestAuthHandler(
+        fetchRegister,
+        username.value,
+        password.value,
+        $q,
+      );
+      await router.push('/');
     } else {
       $q.notify({
         color: 'red-5',
@@ -91,8 +107,14 @@ async function onRegister() {
 async function onLogin() {
   await authForm.value?.validate().then(async (success) => {
     if (accept.value && success && username.value && password.value) {
-      const { userId, token } = await requestAuthHandler(fetchLogin, username.value, password.value, $q) as AuthCredentials;
-      storeUserData(userId, token, username.value)
+      const { userId, token } = (await requestAuthHandler(
+        fetchLogin,
+        username.value,
+        password.value,
+        $q,
+      )) as AuthCredentials;
+      storeUserData(userId, token, username.value);
+      await router.push('/');
     } else {
       $q.notify({
         color: 'red-5',

@@ -34,24 +34,13 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, computed } from 'vue';
+import { computed } from 'vue';
 import { SharedGetters } from '../../store/shared/getters';
 import { useStore } from '../../store';
-import { SharedActions } from 'src/store/shared/actions';
-import { SharedMutations } from 'src/store/shared/mutations';
 
 const store = useStore();
 const isUserAuth = computed(() => store.getters[SharedGetters.isUserAuth]);
 const isLoading = computed(() => store.getters[SharedGetters.isLoading]);
-
-if (!isUserAuth.value) {
-  store.commit(SharedMutations.setLoadingFlag, true);
-  onBeforeMount(async () => {
-    await store.dispatch(SharedActions.getUserAuthentification);
-    store.commit(SharedMutations.setLoadingFlag, false);
-  });
-}
-
 </script>
 
 <style>

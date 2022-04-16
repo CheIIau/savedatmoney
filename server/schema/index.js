@@ -130,11 +130,17 @@ const RootMutationType = new graphql_1.GraphQLObjectType({
                     if (aBusyMonthsItem) {
                         const month = aBusyMonthsItem.months.find((month) => month === currentMonth);
                         if (month === undefined) {
-                            await models_1.UsersExpensesModel.findOneAndUpdate({ username: args.username, 'busyMonths.year': currentYear }, { $push: { 'busyMonths.$.months': currentMonth } });
+                            await models_1.UsersExpensesModel.findOneAndUpdate({
+                                username: args.username,
+                                'busyMonths.year': currentYear,
+                            }, { $push: { 'busyMonths.$.months': currentMonth } });
                         }
                     }
                     else {
-                        UserExpense.busyMonths.push({ year: currentYear, months: [currentMonth] });
+                        UserExpense.busyMonths.push({
+                            year: currentYear,
+                            months: [currentMonth],
+                        });
                     }
                     await UserExpense.save();
                     return UserExpense;
@@ -150,17 +156,4 @@ exports.Schema = new graphql_1.GraphQLSchema({
     query: RootQuery,
     mutation: RootMutationType,
 });
-// const categoryList = [
-//   { name: 'Супермаркеты' },
-//   { name: 'ЖКХ, связь, интернет' },
-//   { name: 'Автомобиль' },
-//   { name: 'Одежда и аксессуары' },
-//   { name: 'Здоровье и красота' },
-//   { name: 'Рестораны и кафе' },
-//   { name: 'Развлечения и хобби' },
-//   { name: 'Онлайн маркеты' },
-//   { name: 'Все для дома' },
-//   { name: 'Питомцы' },
-//   { name: 'Прочие расходы' },
-// ];
 //# sourceMappingURL=index.js.map

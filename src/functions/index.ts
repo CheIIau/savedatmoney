@@ -1,3 +1,40 @@
+export function formatDate(dateVal: string) {
+  const months = [
+    'Янв',
+    'Фев',
+    'Мар',
+    'Апр',
+    'Май',
+    'Июн',
+    'Июл',
+    'Авг',
+    'Сен',
+    'Окт',
+    'Ноя',
+    'Дек',
+  ];
+  const date = new Date(dateVal);
+  const year = date.getFullYear();
+  const month = months[date.getMonth()];
+  const hour = date.getHours();
+  const day = date.getDate();
+  const min =
+    date.getMinutes() < 10
+      ? '0' + String(date.getMinutes())
+      : date.getMinutes();
+  const time =
+    String(day) +
+    ' ' +
+    String(month) +
+    ' ' +
+    String(year) +
+    ' ' +
+    String(hour) +
+    ':' +
+    String(min);
+  return time;
+}
+
 // export async function getAuthentification() {
 //   const token = localStorage.getItem('token');
 //   if (!token) {

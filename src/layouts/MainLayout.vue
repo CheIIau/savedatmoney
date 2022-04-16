@@ -26,6 +26,22 @@
           :key="link.title"
           v-bind="link"
         />
+        <q-item v-if="isUserAuth" clickable @click="onLogout">
+          <q-item-section avatar>
+            <q-icon name="logout" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Выйти из аккаунта</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item v-if="!isUserAuth" clickable to="/registration">
+          <q-item-section avatar>
+            <q-icon name="how_to_reg" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Регистрация/Вход</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -39,8 +55,16 @@
 
 <script setup lang="ts">
 import PageLink from 'src/components/PageLink.vue';
-import { ref } from 'vue';
+import { ref, computed, onBeforeMount } from 'vue';
+import { SharedGetters } from 'src/store/shared/getters';
+import { useStore } from 'src/store';
+import { SharedActions } from 'src/store/shared/actions';
+import { SharedMutations } from 'src/store/shared/mutations';
+import { useRouter } from 'vue-router';
 
+const store = useStore();
+const isUserAuth = computed(() => store.getters[SharedGetters.isUserAuth]);
+const router = useRouter();
 const pageLinks = [
   {
     title: 'Главная страница',
@@ -48,18 +72,34 @@ const pageLinks = [
     link: '/',
   },
   {
-    title: 'Регистрация',
-    icon: 'how_to_reg',
-    link: '/registration',
-  },
-  {
     title: 'Добавить расходы',
     icon: 'currency_ruble',
     link: '/add',
+  },
+  {
+    title: 'Посмотреть расходы',
+    icon: 'savings',
+    link: '/allexpenses',
   },
 ];
 const leftDrawerOpen = ref(false);
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
+}
+
+if (!isUserAuth.value) {
+  store.commit(SharedMutations.setLoadingFlag, true);
+  onBeforeMount(async () => {
+    await store.dispatch(SharedActions.getUserAuthentification);
+    store.commit(SharedMutations.setLoadingFlag, false);
+  });
+}
+
+async function onLogout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('userId');
+  localStorage.removeItem('username');
+  store.commit(SharedMutations.setUserAuthFlag, false);
+  await router.push('/');
 }
 </script>

@@ -5,7 +5,10 @@
     "esModuleInterop": true,
     "allowJs": true,
     "sourceMap": true,
-    "noImplicitThis": true
+    "noImplicitThis": true,
+    "jsx": "preserve",
+    "target": "esnext",
+    "lib": ["ESNext", "DOM"]
   },
   "exclude": ["node_modules", "dist"]
 }

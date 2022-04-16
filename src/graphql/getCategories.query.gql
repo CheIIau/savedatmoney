@@ -1,5 +1,10 @@
 query getCategories {
   categories {
     name
+    id
+  }
+  categoriesLocal @client {
+    name
+    id
   }
 }

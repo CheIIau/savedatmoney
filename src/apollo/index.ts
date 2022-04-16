@@ -1,10 +1,25 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { ApolloClientOptions } from '@apollo/client/core';
+import { ApolloClientOptions } from '@apollo/client/core';
 import { createHttpLink, InMemoryCache } from '@apollo/client/core';
 import type { BootFileParams } from '@quasar/app';
 
-export /* async */ function getClientOptions(/* {app, router, ...} */ options?: Partial<BootFileParams<any>>) {
+const cache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        categoriesLocal(existing, { args, readField }) {
+          const categories = readField('categories');
+          return categories;
+        },
+      },
+    },
+  },
+});
+
+export /* async */ function getClientOptions(
+  /* {app, router, ...} */ options?: Partial<BootFileParams<any>>,
+) {
   return <ApolloClientOptions<unknown>>Object.assign(
     // General options.
     <ApolloClientOptions<unknown>>{
@@ -14,8 +29,8 @@ export /* async */ function getClientOptions(/* {app, router, ...} */ options?: 
           // Change to your graphql endpoint.
           'http://localhost:3000/graphql',
       }),
-
-      cache: new InMemoryCache(),
+      resolvers: {},
+      cache,
     },
 
     // Specific Quasar mode options.
