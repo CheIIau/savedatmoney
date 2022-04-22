@@ -1,8 +1,8 @@
 {
-  "name": "savethatmoney",
+  "name": "savedatmoney",
   "version": "1.0.0",
   "description": "MoneySaver",
-  "productName": "SaveThatMoney",
+  "productName": "SaveDatMoney",
   "author": "CheIIau <rip.rulez123@gmail.com>",
   "private": true,
   "scripts": {
