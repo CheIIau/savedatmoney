@@ -4,7 +4,7 @@ export async function fetchRegister(
   username: string,
   password: string,
 ): Promise<AuthResponse> {
-  return (await fetch('http://localhost:3000/auth/register', {
+  return (await fetch('/auth/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
@@ -20,7 +20,7 @@ export async function fetchLogin(
   username: string,
   password: string,
 ): Promise<AuthResponse> {
-  return (await fetch('http://localhost:3000/auth/login', {
+  return (await fetch('/auth/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',

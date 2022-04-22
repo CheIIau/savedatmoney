@@ -4,7 +4,7 @@ module.exports = {
   client: {
     service: {
       name: 'savedatmoney',
-      url: 'http://localhost:3000/graphql',
+      url: '/graphql',
     },
     // Files processed by the extension
     includes: ['src/**/*.vue', 'src/**/*.js', 'src/**/*.ts'],

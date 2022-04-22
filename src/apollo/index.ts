@@ -27,7 +27,7 @@ export /* async */ function getClientOptions(
         uri:
           process.env.GRAPHQL_URI ||
           // Change to your graphql endpoint.
-          'http://localhost:3000/graphql',
+          '/graphql',
       }),
       resolvers: {},
       cache,
