@@ -1,6 +1,9 @@
 import { QVueGlobals } from 'quasar';
 
-export async function fetchRegister(username: string, password: string): Promise<AuthResponse> {
+export async function fetchRegister(
+  username: string,
+  password: string,
+): Promise<AuthResponse> {
   return (await fetch('http://localhost:3000/auth/register', {
     method: 'POST',
     headers: {
@@ -13,7 +16,10 @@ export async function fetchRegister(username: string, password: string): Promise
   })) as AuthResponse;
 }
 
-export async function fetchLogin(username: string, password: string): Promise<AuthResponse> {
+export async function fetchLogin(
+  username: string,
+  password: string,
+): Promise<AuthResponse> {
   return (await fetch('http://localhost:3000/auth/login', {
     method: 'POST',
     headers: {
@@ -26,7 +32,12 @@ export async function fetchLogin(username: string, password: string): Promise<Au
   })) as AuthResponse;
 }
 
-export async function requestAuthHandler(cb: typeof fetchRegister, username: string, password: string, q: QVueGlobals) {
+export async function requestAuthHandler(
+  cb: typeof fetchRegister,
+  username: string,
+  password: string,
+  q: QVueGlobals,
+) {
   let message;
   let resJson;
   try {
@@ -54,14 +65,15 @@ export async function requestAuthHandler(cb: typeof fetchRegister, username: str
   });
   if (resJson.userId && resJson.token) {
     return { userId: resJson.userId, token: resJson.token } as AuthCredentials;
-  } else {
-    q.notify({
-      color: 'red-5',
-      textColor: 'white',
-      icon: 'warning',
-      message: 'Что-то не так в запросе',
-    });
   }
+  // else {
+  //   q.notify({
+  //     color: 'red-5',
+  //     textColor: 'white',
+  //     icon: 'warning',
+  //     message: 'Что-то не так в запросе',
+  //   });
+  // }
 }
 
 export interface AuthCredentials {
@@ -69,7 +81,11 @@ export interface AuthCredentials {
   token: string;
 }
 
-export function storeUserData(userId: string, token: string, username: string): void {
+export function storeUserData(
+  userId: string,
+  token: string,
+  username: string,
+): void {
   localStorage.setItem('userId', userId);
   localStorage.setItem('token', token);
   localStorage.setItem('username', username);

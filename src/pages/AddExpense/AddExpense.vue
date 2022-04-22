@@ -5,6 +5,7 @@
   >
     <p>{{ title }}</p>
     <q-form
+      class="add-expense-form"
       greedy
       @submit.prevent="onSubmit"
     >
@@ -62,8 +63,7 @@ import { useQuery, useMutation } from '@vue/apollo-composable';
 import { quantityRules } from './AddExpense';
 import { useQuasar } from 'quasar';
 import getExpenses from 'src/graphql/getExpenses.query.gql';
-import { AddExpenseMutationData, Expense, ExpensesOfUser } from '../AllExpenses/AllExpenses';
-import { ApolloCache } from '@apollo/client/cache';
+import { Expense, ExpensesOfUser } from '../AllExpenses/AllExpenses';
 
 interface CategoryObject {
   categoriesLocal: Array<{ name: string }>;
@@ -88,9 +88,9 @@ const username = localStorage.getItem('username');
 
 if (result.value) {
   const categoryObject = result.value as CategoryObject;
-  categoryObject.categoriesLocal.forEach(
+  categoryObject.categoriesLocal.forEach( //можно просто categories
     (
-      category, //можно просто categories
+      category,
     ) => categoryList.push(category.name),
   );
 } //костыль, но иначе кэш не работает
@@ -118,14 +118,28 @@ const {
   error,
 } = useMutation(addExpenseMutation, {
   update(cache, { data: { addExpense: { expenses } } }) {
-    const { expensesOfUser } = cache.readQuery({ query: getExpenses, variables: { username } }) as ExpensesOfUser;
-    const arrayOfExpenses = expenses as Expense[]
-    expensesOfUser[0].expenses.push(arrayOfExpenses[arrayOfExpenses.length - 1])
-    console.log(expenses);
-    console.log(expensesOfUser);
-    // cache.writeQuery({ query: getExpenses, variables: { username }, data })
+    const expensesData = cache.readQuery({ query: getExpenses, variables: { username } }) as ExpensesOfUser;
+    if (expensesData) {
+      const arrayOfExpenses = expenses as Expense[];
+      // const updatedExpensesOfUser = JSON.parse(JSON.stringify(expensesOfUser)) as UserExpenses[]
+      // updatedExpensesOfUser[0].expenses.push(arrayOfExpenses[arrayOfExpenses.length - 1]);
+      // console.log(expensesOfUser);
+      // console.log(arrayOfExpenses);
+      cache.writeQuery({
+        query: getExpenses, variables: { username }, data: {
+          ...expensesData,
+          expensesOfUser: {
+            '0': {
+              username,
+              expenses: [...arrayOfExpenses],
+            }
+          }
+        }
+      })
+    }
   }
-});
+}
+);
 
 async function onSubmit() {
   if (
@@ -161,7 +175,17 @@ async function onSubmit() {
 }
 </script>
 
-<style>
+<style lang="scss">
+.add-expense-form {
+  @media (max-width: 380px) {
+    width: 250px;
+  }
+
+  @media (min-width: 381px) {
+    width: 300px;
+  }
+}
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;

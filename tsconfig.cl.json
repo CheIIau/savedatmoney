@@ -6,7 +6,8 @@
     "allowJs": true,
     "sourceMap": true,
     "noImplicitThis": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "target": "esnext"
   },
   "exclude": ["node_modules", "dist"]
 }

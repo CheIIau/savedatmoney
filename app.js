@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
-const express_1 = (0, tslib_1.__importDefault)(require("express"));
-const path_1 = (0, tslib_1.__importDefault)(require("path"));
-const cors_1 = (0, tslib_1.__importDefault)(require("cors"));
-const connect_history_api_fallback_1 = (0, tslib_1.__importDefault)(require("connect-history-api-fallback"));
+const express_1 = tslib_1.__importDefault(require("express"));
+const path_1 = tslib_1.__importDefault(require("path"));
+const cors_1 = tslib_1.__importDefault(require("cors"));
+const connect_history_api_fallback_1 = tslib_1.__importDefault(require("connect-history-api-fallback"));
 const mongoose_1 = require("mongoose");
 const express_graphql_1 = require("express-graphql");
 const schema_1 = require("./server/schema");

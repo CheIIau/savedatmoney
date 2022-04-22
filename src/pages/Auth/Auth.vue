@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="q-pa-md" style="max-width: 400px">
+    <div
+      class="q-pa-md"
+      style="max-width: 400px"
+    >
       <q-form
         ref="authForm"
         class="q-gutter-md"
@@ -68,6 +71,7 @@
 import { useQuasar, QForm } from 'quasar';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStore } from 'src/store';
 import {
   fetchRegister,
   fetchLogin,
@@ -75,8 +79,10 @@ import {
   AuthCredentials,
   storeUserData,
 } from './Auth';
+import { SharedActions } from 'src/store/shared/actions';
 const router = useRouter();
 const $q = useQuasar();
+const store = useStore();
 
 const username = ref<string | null>(null);
 const password = ref<string | null>(null);
@@ -92,7 +98,6 @@ async function onRegister() {
         password.value,
         $q,
       );
-      await router.push('/');
     } else {
       $q.notify({
         color: 'red-5',
@@ -114,6 +119,7 @@ async function onLogin() {
         $q,
       )) as AuthCredentials;
       storeUserData(userId, token, username.value);
+      await store.dispatch(SharedActions.getUserAuthentification);
       await router.push('/');
     } else {
       $q.notify({

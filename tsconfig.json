@@ -7,8 +7,7 @@
     "sourceMap": true,
     "noImplicitThis": true,
     "jsx": "preserve",
-    "target": "esnext",
-    "lib": ["ESNext", "DOM"]
+    "target": "esnext"
   },
   "exclude": ["node_modules", "dist"]
 }

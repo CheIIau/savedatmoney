@@ -1,5 +1,11 @@
 import { Schema, model } from 'mongoose';
-import { Expense, UserExpenses, Category, UserData, UserBusyMonths } from './types';
+import {
+  Expense,
+  UserExpenses,
+  Category,
+  UserData,
+  UserBusyMonths,
+} from './types';
 
 const expenseSchema = new Schema<Expense>({
   quantity: { type: Number, required: true },
@@ -10,8 +16,13 @@ const expenseSchema = new Schema<Expense>({
 });
 
 const userBusyMonthsSchema = new Schema<UserBusyMonths>({
-  year: { type: Number, required: true, unique: true },
-  months: [{ type: Number, required: true, unique: true }],
+  year: {
+    type: Number,
+    required: true,
+    index: true,
+    sparse: true,
+  },
+  months: [{ type: Number, required: true, index: true, sparse: true }],
 });
 
 const usersExpensesSchema = new Schema<UserExpenses>({
@@ -29,6 +40,9 @@ const userDataSchema = new Schema<UserData>({
   password: { type: String, required: true },
 });
 
-export const UsersExpensesModel = model<UserExpenses>('UserExpensesList', usersExpensesSchema);
+export const UsersExpensesModel = model<UserExpenses>(
+  'UserExpensesList',
+  usersExpensesSchema,
+);
 export const CategoryModel = model<Category>('Category', categorySchema);
 export const UserDataModel = model<UserData>('User', userDataSchema);

@@ -10,8 +10,13 @@ const expenseSchema = new mongoose_1.Schema({
     year: { type: Number, default: new Date().getFullYear(), required: true },
 });
 const userBusyMonthsSchema = new mongoose_1.Schema({
-    year: { type: Number, required: true, unique: true },
-    months: [{ type: Number, required: true, unique: true }],
+    year: {
+        type: Number,
+        required: true,
+        index: true,
+        sparse: true,
+    },
+    months: [{ type: Number, required: true, index: true, sparse: true }],
 });
 const usersExpensesSchema = new mongoose_1.Schema({
     username: { type: String, required: true },

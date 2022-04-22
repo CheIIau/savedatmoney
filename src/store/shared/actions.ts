@@ -8,19 +8,25 @@ export enum SharedActions {
 }
 
 type AugmentedActionContext = {
-  commit<K extends keyof Mutations>(key: K, payload: Parameters<Mutations[K]>[1]): ReturnType<Mutations[K]>;
+  commit<K extends keyof Mutations>(
+    key: K,
+    payload: Parameters<Mutations[K]>[1],
+  ): ReturnType<Mutations[K]>;
 } & Omit<ActionContext<SharedStateInterface, StateInterface>, 'commit'>;
 
 export interface Actions {
-  [SharedActions.getUserAuthentification]({ commit }: AugmentedActionContext): Promise<AuthResponse | undefined>;
+  [SharedActions.getUserAuthentification]({
+    commit,
+  }: AugmentedActionContext): Promise<AuthResponse | undefined | void>;
 }
 
 const actions: ActionTree<SharedStateInterface, StateInterface> & Actions = {
-  async [SharedActions.getUserAuthentification]({ commit }): Promise<AuthResponse | undefined> {
+  async [SharedActions.getUserAuthentification]({
+    commit,
+  }): Promise<AuthResponse | undefined | void> {
     const token = localStorage.getItem('token');
     if (!token) {
-      console.log('Токен не найден');
-      return;
+      throw new Error('Токен не найден');
     }
     try {
       const response = await fetch('http://localhost:3000/auth/auth', {

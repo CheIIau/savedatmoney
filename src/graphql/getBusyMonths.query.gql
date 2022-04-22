@@ -1,0 +1,8 @@
+query getBusyMonths($username: String!) {
+  expensesOfUser(username: $username) {
+    busyMonths {
+      year
+      months
+    }
+  }
+}

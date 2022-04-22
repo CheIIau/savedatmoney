@@ -1,0 +1,52 @@
+.my-sticky-virtscroll-table {
+  @media (min-height: 500px) and (max-height: 700px) {
+    max-height: 500px;
+  }
+
+  @media (min-height: 700px) and (max-height: 900px) {
+    max-height: 600px;
+  }
+
+  @media (min-height: 900px) and (max-height: 1200px) {
+    max-height: 700px;
+  }
+}
+
+.expenses-container__table {
+  @media (min-width: 1200px) {
+    margin-left: 70px;
+  }
+}
+
+.expenses-container {
+  align-items: center;
+
+  @media (min-width: 1002px) and (max-width: 1200px) {
+    flex-direction: column;
+  }
+}
+
+.q-table__top,
+.q-table__bottom,
+thead tr:first-child th {
+  background-color: #fff;
+}
+
+thead tr th {
+  position: sticky;
+  z-index: 1;
+}
+
+thead tr:last-child th {
+  top: 48px;
+}
+
+thead tr:first-child th {
+  top: 0;
+}
+
+.zero-expenses {
+  font-weight: 300;
+  line-height: 120%;
+  font-family: "Open sans", sans-serif;
+}

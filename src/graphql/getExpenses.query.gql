@@ -9,5 +9,9 @@ query getExpenses($username: String!) {
       month
       year
     }
+    busyMonths {
+      year
+      months
+    }
   }
 }

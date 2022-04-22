@@ -1,77 +1,161 @@
 <template>
-    <div class="q-pa-md">
-        <DonutComponent
-            :expenses-labels="dataLabels"
-            :expenses-values="dataValues"
-        />
-        <q-table
-            title="Расходы"
-            :loading="loading"
-            :rows="expenses"
-            :columns="columns"
-            row-key="name"
-            class="my-sticky-virtscroll-table"
-            :rows-per-page-options="[0]"
-            virtual-scroll
-            :wrap-cells=true
-            :hide-pagination="true"
-        />
-    </div>
+  <main class="q-page row justify-center expenses-container">
+    <skeleton-expenses :loading="loading" />
+    <DonutComponent
+      v-if="!loading && expenses.length"
+      class="q-pa-md"
+      :expenses-labels="listOfCategories"
+      :expenses-values="listOfQuantities"
+      :current-year="currentYear"
+      :current-month="currentMonth"
+      :object-of-busy-months="objectOfBusyMonths"
+      @left-arrow-click="loadPreviousMonthExpenses"
+      @right-arrow-click="loadNextMonthExpenses"
+    />
+    <q-table
+      v-if="!loading && filteredArrayOfExpenses.length"
+      title="Расходы"
+      :loading="loading"
+      :rows="filteredArrayOfExpenses"
+      :columns="columns"
+      row-key="name"
+      class="my-sticky-virtscroll-table expenses-container__table q-pa-md"
+      :rows-per-page-options="[0]"
+      virtual-scroll
+      :wrap-cells="true"
+      :hide-pagination="true"
+    />
+  </main>
+
+  <p
+    v-if="!loading && !expenses.length"
+    class="text-h4 zero-expenses text-center"
+  >
+    У вас пока нет расходов<br />
+    :(
+  </p>
 </template>
 
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import DonutComponent from 'src/components/DonutComponent.vue';
+import DonutComponent from 'src/components/DonutComponent/DonutComponent.vue';
+import SkeletonExpenses from 'src/components/SkeletonExpenses.vue';
 import getExpenses from 'src/graphql/getExpenses.query.gql';
 import { useQuery } from '@vue/apollo-composable';
-import { ExpensesOfUser, Expense } from './AllExpenses';
+import {
+  ExpensesOfUser,
+  Expense,
+  getQuantitiesPerEachCategory,
+  ObjectOfBusyMonths,
+  UserExpenses,
+} from './AllExpenses';
 import { ApolloQueryResult } from '@apollo/client/core';
-import { Ref, ref } from 'vue';
+import { Ref, ref, computed } from 'vue';
 import { formatDate } from 'src/functions';
-import { QTableProps } from 'quasar'
+import { QTableProps } from 'quasar';
+import { createObjectOfBusyMonths } from './AllExpenses.BusyMonths';
 
-const dataValues: Ref<number[]> = ref([30, 40, 60, 70, 5]);
-const dataLabels: Ref<string[]> = ref(['Paris', 'Nîmes', 'Toulon', 'Perpignan', 'Autre']);
+const listOfCategories = computed(() => {
+  if (filteredArrayOfExpenses.value.length !== 0) {
+    return [
+      ...new Set(filteredArrayOfExpenses.value.map((item) => item.category)),
+    ];
+  }
+  return [];
+});
+const listOfQuantities = computed(() => {
+  if (filteredArrayOfExpenses.value.length !== 0) {
+    return getQuantitiesPerEachCategory(
+      filteredArrayOfExpenses.value,
+      listOfCategories.value,
+    );
+  }
+  return [];
+});
+const objectOfBusyMonths: Ref<ObjectOfBusyMonths> = ref({});
 
+const currentMonth = ref(new Date().getMonth());
+const currentYear = ref(new Date().getFullYear());
+let expenses: Ref<Expense[]> = ref([]);
 const username = localStorage.getItem('username');
 const columns: QTableProps['columns'] = [
-    { name: 'category', label: 'Категория', field: 'category', sortable: true, align: 'left' },
-    { name: 'quantity', label: 'Сумма', field: 'quantity', sortable: true, align: 'left' },
-    { name: 'date', label: 'Время добавления', field: 'date', sortable: true, align: 'center', format: (val: string) => formatDate(val) },
-]
-let expenses: Ref<undefined> | Ref<Expense[]> = ref(undefined);
+  {
+    name: 'category',
+    label: 'Категория',
+    field: 'category',
+    sortable: true,
+    align: 'left',
+  },
+  {
+    name: 'quantity',
+    label: 'Сумма',
+    field: 'quantity',
+    sortable: true,
+    align: 'left',
+  },
+  {
+    name: 'date',
+    label: 'Время добавления',
+    field: 'date',
+    sortable: true,
+    align: 'center',
+    format: (val: string) => formatDate(val),
+  },
+];
 
-const { result,
-    loading,
-    onResult: onResultExpensesQuery,
+const filteredArrayOfExpenses = computed(() => {
+  const arr = expenses.value.filter((item) => {
+    return item.year === currentYear.value && item.month === currentMonth.value;
+  });
+  if (arr.length === 0) return [];
+  return arr;
+});
+
+const {
+  result,
+  loading,
+  onResult: onResultExpensesQuery,
 } = useQuery(getExpenses, { username }, { fetchPolicy: 'cache-first' }); //cache-and-network
 
-if (result.value as ExpensesOfUser) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    expenses.value = result.value.expensesOfUser[0].expenses;
+if (result.value?.expensesOfUser[0] as UserExpenses) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  expenses.value = result.value.expensesOfUser[0]?.expenses;
+  objectOfBusyMonths.value = createObjectOfBusyMonths(
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    result.value.expensesOfUser[0].busyMonths,
+  );
 } //костыль, но иначе кэш не работает
 
 onResultExpensesQuery((queryResult: ApolloQueryResult<ExpensesOfUser>) => {
+  if (queryResult.data.expensesOfUser.length !== 0) {
     expenses.value = queryResult.data.expensesOfUser[0].expenses;
-})
+    objectOfBusyMonths.value = createObjectOfBusyMonths(
+      queryResult.data.expensesOfUser[0].busyMonths,
+    );
+  }
+});
 
+function loadPreviousMonthExpenses() {
+  if (currentMonth.value === 0) {
+    currentYear.value -= 1;
+    currentMonth.value = 11;
+    return;
+  }
+  currentMonth.value -= 1;
+}
+function loadNextMonthExpenses() {
+  if (
+    currentMonth.value === 11 &&
+    currentYear.value !== new Date().getFullYear()
+  ) {
+    currentYear.value += 1;
+    currentMonth.value = 0;
+    return;
+  }
+  currentMonth.value += 1;
+}
 </script>
 
-<style scoped lang="sass">
-
-.my-sticky-virtscroll-table
-    max-height: 500px
-
-.q-table__top,
-.q-table__bottom,
-thead tr:first-child th
-    background-color: #fff
-
-thead tr th
-    position: sticky
-    z-index: 1
-thead tr:last-child th
-    top: 48px
-thead tr:first-child th
-    top: 0
+<style scoped lang="scss">
+@import './AllExpenses.scss';
 </style>
