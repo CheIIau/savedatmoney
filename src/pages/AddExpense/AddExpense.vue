@@ -73,7 +73,7 @@ interface CategoryObject {
 const $q = useQuasar();
 const title = 'Добавьте статью расходов и сумму';
 const category = ref<null | string>(null);
-const quantity = ref<number>(0);
+const quantity = ref<number>();
 const quantityRef = ref<QField>();
 let categoryList: string[] = reactive([]);
 

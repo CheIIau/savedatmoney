@@ -13,11 +13,20 @@
 
         <q-toolbar-title>SaveDatMoney</q-toolbar-title>
 
-        <div>Здесь будет ссылка на гитхаб</div>
+        <div><a href="https://github.com/CheIIau/savedatmoney">
+            <img
+              src="../assets/github-logo.svg"
+              alt="github_logo"
+              class="github-logo"
+            >
+          </a></div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" bordered>
+    <q-drawer
+      v-model="leftDrawerOpen"
+      bordered
+    >
       <q-list>
         <q-item-label header>SaveDatMoney</q-item-label>
 
@@ -26,7 +35,11 @@
           :key="link.title"
           v-bind="link"
         />
-        <q-item v-if="isUserAuth" clickable @click="onLogout">
+        <q-item
+          v-if="isUserAuth"
+          clickable
+          @click="onLogout"
+        >
           <q-item-section avatar>
             <q-icon name="logout" />
           </q-item-section>
@@ -34,7 +47,11 @@
             <q-item-label>Выйти из аккаунта</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item v-if="!isUserAuth" clickable to="/registration">
+        <q-item
+          v-if="!isUserAuth"
+          clickable
+          to="/registration"
+        >
           <q-item-section avatar>
             <q-icon name="how_to_reg" />
           </q-item-section>
@@ -103,3 +120,9 @@ async function onLogout() {
   await router.push('/');
 }
 </script>
+
+<style scoped>
+.github-logo {
+  max-width: 30px;
+}
+</style>

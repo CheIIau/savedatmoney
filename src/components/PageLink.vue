@@ -1,6 +1,13 @@
 <template>
-  <q-item clickable :to="props.link">
-    <q-item-section v-if="props.icon" avatar>
+  <q-item
+    clickable
+    :to="props.link"
+    :exact="true"
+  >
+    <q-item-section
+      v-if="props.icon"
+      avatar
+    >
       <q-icon :name="props.icon" />
     </q-item-section>
     <q-item-section>
