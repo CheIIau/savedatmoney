@@ -17,16 +17,17 @@ type AugmentedActionContext = {
 export interface Actions {
   [SharedActions.getUserAuthentification]({
     commit,
-  }: AugmentedActionContext): Promise<AuthResponse | undefined | void>;
+  }: AugmentedActionContext): Promise<AuthResponse | undefined>;
 }
 
 const actions: ActionTree<SharedStateInterface, StateInterface> & Actions = {
   async [SharedActions.getUserAuthentification]({
     commit,
-  }): Promise<AuthResponse | undefined | void> {
+  }): Promise<AuthResponse | undefined> {
     const token = localStorage.getItem('token');
     if (!token) {
-      throw new Error('Токен не найден');
+      console.log('Токен не найден');
+      return;
     }
     try {
       const response = await fetch('http://localhost:3000/auth/auth', {
