@@ -42,7 +42,7 @@ export function formatDate(dateVal: string) {
 //     return;
 //   }
 //   try {
-//     const response = await fetch('http://localhost:3000/auth/auth', {
+//     const response = await fetch('/auth/auth', {
 //       headers: { Authorization: `Bearer ${token}` },
 //     });
 //     const resJson = (await response.json()) as AuthResponse;

@@ -115,7 +115,7 @@ const {
   result,
   loading,
   onResult: onResultExpensesQuery,
-} = useQuery(getExpenses, { username }, { fetchPolicy: 'cache-first' }); //cache-and-network
+} = useQuery(getExpenses, { username }, { fetchPolicy: 'cache-first' });
 
 if (result.value?.expensesOfUser[0] as UserExpenses) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

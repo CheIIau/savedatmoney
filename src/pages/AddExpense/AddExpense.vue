@@ -3,25 +3,45 @@
     class="text-center"
     active
   >
-    <p>{{ title }}</p>
+    <p v-if="!category">Добавьте статью расходов и сумму</p>
+    <div v-else>
+      <q-btn
+        align="right"
+        class="btn-fixed-width q-mb-lg"
+        color="secondary"
+        label="Выбрать другую категорию"
+        icon="reply"
+        @click="category = null"
+      />
+      <p class="category-name">Категория: {{ category }}</p>
+    </div>
+
     <q-form
       class="add-expense-form"
       greedy
       @submit.prevent="onSubmit"
     >
-      <q-select
-        v-model="category"
-        :loading="loading"
-        bg-color="green"
-        dense
-        filled
-        :options="categoryList"
-        label="Статьи расходов"
+      <div
+        v-if="!category"
+        class="add-expense-form__category-buttons"
       >
-        <template #prepend>
-          <q-icon name="attach_money" />
-        </template>
-      </q-select>
+        <div
+          v-for="icon, i in categoryIcons"
+          :key="icon.name"
+          class="add-expense-form__category-buttons__button"
+        >
+          <label>{{ categoryList[i] }}</label>
+          <q-btn
+            round
+            outline
+            fab
+            :loading="loading"
+            :color="icon.color"
+            :icon="icon.name"
+            @click="category = categoryList[i]"
+          />
+        </div>
+      </div>
       <q-input
         v-if="category"
         ref="quantityRef"
@@ -44,7 +64,7 @@
         class="q-mt-md"
         push
         color="primary"
-        label="Push"
+        label="Добавить"
       >
         <template #loading>
           <q-spinner-facebook />
@@ -60,7 +80,7 @@ import { QField } from 'quasar';
 import getCategoriesQuery from 'src/graphql/getCategories.query.gql';
 import addExpenseMutation from 'src/graphql/addExpense.mutation.gql';
 import { useQuery, useMutation } from '@vue/apollo-composable';
-import { quantityRules } from './AddExpense';
+import { quantityRules, categoryIcons } from './AddExpense';
 import { useQuasar } from 'quasar';
 import getExpenses from 'src/graphql/getExpenses.query.gql';
 import { Expense, ExpensesOfUser } from '../AllExpenses/AllExpenses';
@@ -71,14 +91,12 @@ interface CategoryObject {
 }
 
 const $q = useQuasar();
-const title = 'Добавьте статью расходов и сумму';
 const category = ref<null | string>(null);
 const quantity = ref<number>();
 const quantityRef = ref<QField>();
 let categoryList: string[] = reactive([]);
 
 const {
-  result,
   loading,
   onResult: onResultCategoriesQuery,
   onError: onErrorCategoriesQuery,
@@ -86,14 +104,14 @@ const {
 
 const username = localStorage.getItem('username');
 
-if (result.value) {
-  const categoryObject = result.value as CategoryObject;
-  categoryObject.categoriesLocal.forEach( //можно просто categories
-    (
-      category,
-    ) => categoryList.push(category.name),
-  );
-} //костыль, но иначе кэш не работает
+// if (result.value) {
+//   const categoryObject = result.value as CategoryObject;
+//   categoryObject.categoriesLocal.forEach( //можно просто categories
+//     (
+//       category,
+//     ) => categoryList.push(category.name),
+//   );
+// }
 
 onErrorCategoriesQuery((error) => {
   $q.notify({
@@ -176,15 +194,60 @@ async function onSubmit() {
 </script>
 
 <style lang="scss">
-.add-expense-form {
-  @media (max-width: 380px) {
-    width: 250px;
-  }
+.category-name {
+  font-size: 16px;
+}
 
-  @media (min-width: 381px) {
-    width: 300px;
+.add-expense-form {
+  max-width: 400px;
+
+  &__category-buttons {
+    @media (max-width: 500px) {
+      grid-template-columns: repeat(6, 1fr);
+    }
+
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+
+    &__button {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: space-around;
+      margin: 5px 10px;
+      grid-column: span 2;
+
+      @media (min-width: 501px) {
+        &:last-child:nth-child(4n - 1) {
+          grid-column-end: -2;
+        }
+
+        &:nth-last-child(2):nth-child(4n + 1) {
+          grid-column-end: 4;
+        }
+
+        &:nth-last-child(3):nth-child(4n + 1) {
+          grid-column-end: 4;
+        }
+      }
+
+
+      @media (max-width: 500px) {
+        margin: 0 10px;
+
+        &:last-child:nth-child(3n - 1) {
+          grid-column-end: -2;
+        }
+
+        &:nth-last-child(2):nth-child(3n + 1) {
+          grid-column-end: 4;
+        }
+      }
+    }
   }
 }
+
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -196,3 +259,18 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 </style>
+
+
+      <!-- <q-select
+        v-model="category"
+        :loading="loading"
+        bg-color="green"
+        dense
+        filled
+        :options="categoryList"
+        label="Статьи расходов"
+      >
+        <template #prepend>
+          <q-icon name="attach_money" />
+        </template>
+      </q-select> -->

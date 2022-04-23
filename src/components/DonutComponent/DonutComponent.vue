@@ -90,10 +90,13 @@ const { doughnutChartProps } = useDoughnutChart({
 
 function getArrayOfChartColors(length: number) {
   const arrayOfColors: string[] = [];
+  function randomNumber() {
+    return Math.ceil(Math.random() * (255 - 50) + 50);
+  }
   for (let i = 0; i <= length; i++) {
-    const red = Math.ceil(Math.random() * (255 - 50) + 50);
-    const green = Math.ceil(Math.random() * (255 - 50) + 50);
-    const blue = Math.ceil(Math.random() * (255 - 50) + 50);
+    const red = randomNumber();
+    const green = randomNumber();
+    const blue = randomNumber();
     arrayOfColors.push(`rgb(${red}, ${green}, ${blue})`);
   }
   return arrayOfColors;

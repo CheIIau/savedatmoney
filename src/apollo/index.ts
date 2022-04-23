@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ApolloClientOptions } from '@apollo/client/core';
 import { createHttpLink, InMemoryCache } from '@apollo/client/core';
 import type { BootFileParams } from '@quasar/app';
@@ -11,6 +12,14 @@ const cache = new InMemoryCache({
         categoriesLocal(existing, { args, readField }) {
           const categories = readField('categories');
           return categories;
+        },
+        categories(_, { args, toReference }) {
+          if (args) {
+            return toReference({
+              __typename: 'Category',
+              id: args.id,
+            });
+          }
         },
       },
     },

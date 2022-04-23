@@ -67,6 +67,15 @@
         <router-view />
       </q-page>
     </q-page-container>
+
+    <q-btn
+      class="dark-mode"
+      icon="dark_mode"
+      round
+      glossy
+      @click="toggleDarkMode"
+    />
+
   </q-layout>
 </template>
 
@@ -78,14 +87,16 @@ import { useStore } from 'src/store';
 import { SharedActions } from 'src/store/shared/actions';
 import { SharedMutations } from 'src/store/shared/mutations';
 import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
 
+const $q = useQuasar();
 const store = useStore();
 const isUserAuth = computed(() => store.getters[SharedGetters.isUserAuth]);
 const router = useRouter();
 const pageLinks = [
   {
     title: 'Главная страница',
-    icon: 'school',
+    icon: 'menu_book',
     link: '/',
   },
   {
@@ -99,6 +110,12 @@ const pageLinks = [
     link: '/allexpenses',
   },
 ];
+
+const darkMode = localStorage.getItem('dark');
+if (darkMode === 'true') {
+  $q.dark.set(true)
+}
+
 const leftDrawerOpen = ref(false);
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -119,10 +136,26 @@ async function onLogout() {
   store.commit(SharedMutations.setUserAuthFlag, false);
   await router.push('/');
 }
+
+function toggleDarkMode() {
+  $q.dark.toggle();
+  if ($q.dark.isActive) {
+    localStorage.setItem('dark', 'true');
+    return;
+  }
+  localStorage.setItem('dark', 'false');
+}
+
 </script>
 
 <style scoped>
 .github-logo {
   max-width: 30px;
+}
+
+.dark-mode {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
 }
 </style>
