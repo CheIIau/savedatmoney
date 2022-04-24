@@ -1,1 +1,1 @@
-web: tsc && node app.js
+web: node app.js
