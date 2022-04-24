@@ -10,7 +10,7 @@
         class="btn-fixed-width q-mb-lg"
         color="secondary"
         label="Выбрать другую категорию"
-        icon="reply"
+        icon="arrow_back"
         @click="category = null"
       />
       <p class="category-name">Категория: {{ category }}</p>
@@ -32,7 +32,6 @@
         >
           <label>{{ categoryList[i] }}</label>
           <q-btn
-            round
             outline
             fab
             :loading="loading"

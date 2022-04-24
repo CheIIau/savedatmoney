@@ -1,13 +1,21 @@
 {
-  "extends": "@quasar/app/tsconfig-preset",
   "compilerOptions": {
-    "baseUrl": ".",
+    "target": "esnext",
+    "module": "commonjs",
+    "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "sourceMap": true,
     "noImplicitThis": true,
-    "jsx": "preserve",
-    "target": "esnext"
+    "baseUrl": ".",
+    "types": ["node", "express"],
+    "typeRoots": ["./server/types"]
   },
+  "include": ["app.ts", "./*.ts", "./server/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
