@@ -1,3 +1,6 @@
+import { QTableProps } from 'quasar';
+import { formatDate } from 'src/functions';
+
 export interface Expense {
   quantity: number;
   category: string;
@@ -45,3 +48,28 @@ export function getQuantitiesPerEachCategory(
   }
   return listOfExpenses;
 }
+
+export const columns: QTableProps['columns'] = [
+  {
+    name: 'category',
+    label: 'Категория',
+    field: 'category',
+    sortable: true,
+    align: 'left',
+  },
+  {
+    name: 'quantity',
+    label: 'Сумма',
+    field: 'quantity',
+    sortable: true,
+    align: 'left',
+  },
+  {
+    name: 'date',
+    label: 'Время добавления',
+    field: 'date',
+    sortable: true,
+    align: 'center',
+    format: (val: string) => formatDate(val),
+  },
+];

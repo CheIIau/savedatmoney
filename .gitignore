@@ -31,3 +31,6 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
+# app.js
+# app.js.map
+# /server/*.js

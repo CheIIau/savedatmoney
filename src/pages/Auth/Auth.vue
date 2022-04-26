@@ -98,6 +98,7 @@ async function onRegister() {
         password.value,
         $q,
       );
+      await onLogin();
     } else {
       $q.notify({
         color: 'red-5',

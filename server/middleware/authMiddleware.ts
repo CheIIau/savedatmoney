@@ -12,7 +12,7 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
     if (!token) {
       return res.status(401).json({ message: 'Ошибка авторизации' });
     }
-    const decodedJwt = verify(token, jwtAccessSecretKey);
+    const decodedJwt = verify(token, jwtAccessSecretKey!);
     req.user = decodedJwt as DecodedJwt;
     next();
   } catch (error) {

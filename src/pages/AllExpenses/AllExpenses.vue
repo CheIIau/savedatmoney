@@ -2,7 +2,7 @@
   <main class="q-page row justify-center expenses-container">
     <skeleton-expenses :loading="loading" />
     <DonutComponent
-      v-if="!loading && expenses.length"
+      v-if="!loading && expenses?.length"
       class="q-pa-md"
       :expenses-labels="listOfCategories"
       :expenses-values="listOfQuantities"
@@ -13,7 +13,7 @@
       @right-arrow-click="loadNextMonthExpenses"
     />
     <q-table
-      v-if="!loading && filteredArrayOfExpenses.length"
+      v-if="!loading && filteredArrayOfExpenses?.length"
       title="Расходы"
       :loading="loading"
       :rows="filteredArrayOfExpenses"
@@ -48,12 +48,12 @@ import {
   getQuantitiesPerEachCategory,
   ObjectOfBusyMonths,
   UserExpenses,
+  columns
 } from './AllExpenses';
 import { ApolloQueryResult } from '@apollo/client/core';
 import { Ref, ref, computed } from 'vue';
-import { formatDate } from 'src/functions';
-import { QTableProps } from 'quasar';
 import { createObjectOfBusyMonths } from './AllExpenses.BusyMonths';
+let loading: Ref<boolean> = ref(false);
 
 const listOfCategories = computed(() => {
   if (filteredArrayOfExpenses.value.length !== 0) {
@@ -78,30 +78,6 @@ const currentMonth = ref(new Date().getMonth());
 const currentYear = ref(new Date().getFullYear());
 let expenses: Ref<Expense[]> = ref([]);
 const username = localStorage.getItem('username');
-const columns: QTableProps['columns'] = [
-  {
-    name: 'category',
-    label: 'Категория',
-    field: 'category',
-    sortable: true,
-    align: 'left',
-  },
-  {
-    name: 'quantity',
-    label: 'Сумма',
-    field: 'quantity',
-    sortable: true,
-    align: 'left',
-  },
-  {
-    name: 'date',
-    label: 'Время добавления',
-    field: 'date',
-    sortable: true,
-    align: 'center',
-    format: (val: string) => formatDate(val),
-  },
-];
 
 const filteredArrayOfExpenses = computed(() => {
   const arr = expenses.value.filter((item) => {
@@ -111,29 +87,38 @@ const filteredArrayOfExpenses = computed(() => {
   return arr;
 });
 
-const {
-  result,
-  loading,
-  onResult: onResultExpensesQuery,
-} = useQuery(getExpenses, { username }, { fetchPolicy: 'cache-first' });
 
-if (result.value?.expensesOfUser[0] as UserExpenses) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  expenses.value = result.value.expensesOfUser[0]?.expenses;
-  objectOfBusyMonths.value = createObjectOfBusyMonths(
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    result.value.expensesOfUser[0].busyMonths,
-  );
-} //костыль, но иначе кэш не работает
 
-onResultExpensesQuery((queryResult: ApolloQueryResult<ExpensesOfUser>) => {
-  if (queryResult.data.expensesOfUser.length !== 0) {
-    expenses.value = queryResult.data.expensesOfUser[0].expenses;
+if (username) {
+  const {
+    result,
+    loading: loadingResult,
+    onResult: onResultExpensesQuery,
+  } = useQuery(getExpenses, { username }, { fetchPolicy: 'cache-first' });
+  loading = loadingResult
+
+  if (result.value?.expensesOfUser[0] as UserExpenses) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    expenses.value = result.value.expensesOfUser[0]?.expenses;
     objectOfBusyMonths.value = createObjectOfBusyMonths(
-      queryResult.data.expensesOfUser[0].busyMonths,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      result.value.expensesOfUser[0].busyMonths,
     );
-  }
-});
+  } //костыль, но иначе кэш не работает
+
+  onResultExpensesQuery((queryResult: ApolloQueryResult<ExpensesOfUser>) => {
+    if (queryResult.data?.expensesOfUser?.length !== 0) {
+      expenses.value = queryResult.data?.expensesOfUser[0]?.expenses;
+      if (expenses.value) {
+        objectOfBusyMonths.value = createObjectOfBusyMonths(
+          queryResult.data.expensesOfUser[0].busyMonths,
+        );
+      }
+
+    }
+  });
+}
+
 
 function loadPreviousMonthExpenses() {
   if (currentMonth.value === 0) {

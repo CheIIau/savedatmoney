@@ -1,80 +1,102 @@
 <template>
-  <div
-    class="text-center"
-    active
-  >
-    <p v-if="!category">Добавьте статью расходов и сумму</p>
-    <div v-else>
-      <q-btn
-        align="right"
-        class="btn-fixed-width q-mb-lg"
-        color="secondary"
-        label="Выбрать другую категорию"
-        icon="arrow_back"
-        @click="category = null"
-      />
-      <p class="category-name">Категория: {{ category }}</p>
-    </div>
-
-    <q-form
-      class="add-expense-form"
-      greedy
-      @submit.prevent="onSubmit"
-    >
-      <div
-        v-if="!category"
-        class="add-expense-form__category-buttons"
-      >
-        <div
-          v-for="icon, i in categoryIcons"
-          :key="icon.name"
-          class="add-expense-form__category-buttons__button"
-        >
-          <label>{{ categoryList[i] }}</label>
-          <q-btn
-            outline
-            fab
-            :loading="loading"
-            :color="icon.color"
-            :icon="icon.name"
-            @click="category = categoryList[i]"
-          />
-        </div>
+  <div class="text-center">
+    <div v-if="isUserAuth">
+      <div class="text-left">
+        <q-btn
+          v-if="category"
+          round
+          class="category-back-button"
+          icon="arrow_back"
+          @click="category = null"
+        />
       </div>
-      <q-input
-        v-if="category"
-        ref="quantityRef"
-        v-model.number="quantity"
-        :rules="quantityRules"
-        type="number"
-        step="0.01"
-        class="q-mt-md"
-        dense
-        clearable
-        label="Введите сумму"
-      >
-        <template #prepend>
-          <q-icon name="currency_ruble" />
-        </template>
-      </q-input>
-      <q-btn
-        v-if="category"
-        type="submit"
-        class="q-mt-md"
-        push
-        color="primary"
-        label="Добавить"
-      >
-        <template #loading>
-          <q-spinner-facebook />
-        </template>
-      </q-btn>
-    </q-form>
+
+      <div :class="{ 'add-expense-quantity': !!category }">
+        <p
+          v-if="!category"
+          class="add-expense-text"
+        >Добавьте статью расходов и сумму</p>
+        <p
+          v-else
+          class="category-name"
+        >Категория: {{ category }}</p>
+        <q-form
+          class="add-expense-form"
+          greedy
+          @submit.prevent="onSubmit"
+        >
+          <div
+            v-if="!category"
+            class="add-expense-form__category-buttons"
+          >
+            <div
+              v-for="icon, i in categoryIcons"
+              :key="icon.name"
+              class="add-expense-form__category-buttons__button"
+            >
+              <label>{{ categoryList[i] }}</label>
+              <q-btn
+                outline
+                fab
+                :loading="loading"
+                :color="icon.color"
+                :icon="icon.name"
+                @click="category = categoryList[i]"
+              />
+            </div>
+          </div>
+          <q-input
+            v-if="category"
+            ref="quantityRef"
+            v-model.number="quantity"
+            :rules="quantityRules"
+            type="number"
+            step="0.01"
+            class="q-mt-md"
+            dense
+            clearable
+            label="Введите сумму"
+          >
+            <template #prepend>
+              <q-icon name="currency_ruble" />
+            </template>
+          </q-input>
+          <q-btn
+            v-if="category"
+            type="submit"
+            class="q-mt-md"
+            push
+            color="primary"
+            label="Добавить"
+          >
+            <template #loading>
+              <q-spinner-facebook />
+            </template>
+          </q-btn>
+        </q-form>
+      </div>
+    </div>
+    <div v-else>
+      <p class="get-auth-text">Чтобы добавить расходы</p>
+      <div>
+        <router-link
+          v-if="!isUserAuth"
+          v-slot="{ navigate }"
+          custom
+          to="/registration"
+        >
+          <q-btn
+            role="link"
+            @click="navigate"
+          > зарегистируйтесь или войдите</q-btn>
+        </router-link>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { QField } from 'quasar';
 import getCategoriesQuery from 'src/graphql/getCategories.query.gql';
 import addExpenseMutation from 'src/graphql/addExpense.mutation.gql';
@@ -83,6 +105,11 @@ import { quantityRules, categoryIcons } from './AddExpense';
 import { useQuasar } from 'quasar';
 import getExpenses from 'src/graphql/getExpenses.query.gql';
 import { Expense, ExpensesOfUser } from '../AllExpenses/AllExpenses';
+import { SharedGetters } from 'src/store/shared/getters';
+import { useStore } from 'src/store';
+
+const store = useStore();
+const isUserAuth = computed(() => store.getters[SharedGetters.isUserAuth]);
 
 interface CategoryObject {
   categoriesLocal: Array<{ name: string }>;
@@ -94,6 +121,7 @@ const category = ref<null | string>(null);
 const quantity = ref<number>();
 const quantityRef = ref<QField>();
 let categoryList: string[] = reactive([]);
+const username = localStorage.getItem('username');
 
 const {
   loading,
@@ -101,7 +129,6 @@ const {
   onError: onErrorCategoriesQuery,
 } = useQuery(getCategoriesQuery, null, { fetchPolicy: 'cache-first' });
 
-const username = localStorage.getItem('username');
 
 // if (result.value) {
 //   const categoryObject = result.value as CategoryObject;
@@ -192,7 +219,7 @@ async function onSubmit() {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .category-name {
   font-size: 16px;
 }
@@ -201,7 +228,7 @@ async function onSubmit() {
   max-width: 400px;
 
   &__category-buttons {
-    @media (max-width: 500px) {
+    @media (max-width: 350px) {
       grid-template-columns: repeat(6, 1fr);
     }
 
@@ -213,11 +240,11 @@ async function onSubmit() {
       flex-direction: column;
       flex-wrap: nowrap;
       align-items: center;
-      justify-content: space-around;
-      margin: 5px 10px;
+      justify-content: space-between;
+      margin: 10px 10px;
       grid-column: span 2;
 
-      @media (min-width: 501px) {
+      @media (min-width: 351px) {
         &:last-child:nth-child(4n - 1) {
           grid-column-end: -2;
         }
@@ -231,9 +258,8 @@ async function onSubmit() {
         }
       }
 
-
-      @media (max-width: 500px) {
-        margin: 0 10px;
+      @media (max-width: 350px) {
+        margin: 5px 10px;
 
         &:last-child:nth-child(3n - 1) {
           grid-column-end: -2;
@@ -247,7 +273,28 @@ async function onSubmit() {
   }
 }
 
+.add-expense-text {
+  font-size: 18px;
+}
 
+.get-auth-text {
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.category-back-button {
+  margin-bottom: 18px;
+  background-color: rgba(140, 100, 170, 0.1);
+}
+
+.add-expense-quantity {
+  border: solid 3px rgba(140, 100, 170, 0.7);
+  padding: 20px;
+  background-color: rgba(140, 100, 170, 0.1)
+}
+</style>
+
+<style>
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;

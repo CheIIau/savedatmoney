@@ -22,7 +22,9 @@ router.post('/register', (0, express_validator_1.body)('password').isLength({ mi
         }
         const existingUser = await index_1.UserDataModel.findOne({ username });
         if (existingUser) {
-            return res.status(400).json({ message: 'Пользователь с таким ником уже существует' });
+            return res
+                .status(400)
+                .json({ message: 'Пользователь с таким ником уже существует' });
         }
         const hashedPassword = await (0, bcryptjs_1.hash)(password, 6);
         const user = new index_1.UserDataModel({ username, password: hashedPassword });
@@ -45,14 +47,22 @@ router.post('/login', (0, express_validator_1.body)('password').isLength({ min: 
         const { username, password } = req.body;
         const user = await index_1.UserDataModel.findOne({ username });
         if (!user) {
-            return res.status(400).json({ message: 'Нет пользователя с таким ником' });
+            return res
+                .status(400)
+                .json({ message: 'Нет пользователя с таким ником' });
         }
         const isMatch = await (0, bcryptjs_1.compare)(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ message: 'Неверный пароль' });
         }
         const accessToken = (0, jsonwebtoken_1.sign)({ userId: user.id }, constants_1.jwtAccessSecretKey, { expiresIn: '5d' });
-        res.status(200).json({ message: 'Вы вошли в аккаунт', token: accessToken, userId: user.id });
+        res
+            .status(200)
+            .json({
+            message: 'Вы вошли в аккаунт',
+            token: accessToken,
+            userId: user.id,
+        });
     }
     catch (e) {
         res.status(500).json({ message: 'Что-то пошло не так' });
@@ -66,7 +76,13 @@ router.get('/auth', authMiddleware_1.verifyToken, async (req, res) => {
             return res.status(400).json({ message: 'Не удалось авторизоваться' });
         }
         const accessToken = (0, jsonwebtoken_1.sign)({ userId: user.id }, constants_1.jwtAccessSecretKey, { expiresIn: '5d' });
-        res.status(200).json({ message: 'Вы вошли в аккаунт', token: accessToken, userId: user.id });
+        res
+            .status(200)
+            .json({
+            message: 'Вы вошли в аккаунт',
+            token: accessToken,
+            userId: user.id,
+        });
     }
     catch (e) {
         res.status(500).json({ message: 'Что-то пошло не так' });

@@ -1,6 +1,12 @@
 import { store } from 'quasar/wrappers';
 import { InjectionKey } from 'vue';
-import { createStore, Store as VuexStore, useStore as vuexUseStore, CommitOptions, DispatchOptions } from 'vuex';
+import {
+  createStore,
+  Store as VuexStore,
+  useStore as vuexUseStore,
+  CommitOptions,
+  DispatchOptions,
+} from 'vuex';
 
 import shared from './shared';
 import { Actions } from './shared/actions';
@@ -24,7 +30,10 @@ export interface StateInterface {
   // example: unknown;
 }
 
-export type Store = Omit<VuexStore<SharedStateInterface>, 'getters' | 'commit' | 'dispatch'> & {
+export type Store = Omit<
+  VuexStore<SharedStateInterface>,
+  'getters' | 'commit' | 'dispatch'
+> & {
   commit<K extends keyof Mutations, P extends Parameters<Mutations[K]>[1]>(
     key: K,
     payload: P,
@@ -57,8 +66,6 @@ export default store(function (/* { ssrContext } */) {
     modules: {
       shared,
     },
-    // enable strict mode (adds overhead!)
-    // for dev mode and --debug builds only
     strict: !!process.env.DEBUGGING,
   });
 

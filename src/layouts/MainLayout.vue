@@ -8,19 +8,29 @@
           round
           icon="menu"
           aria-label="Menu"
+          class="drawer-button"
           @click="toggleLeftDrawer"
         />
 
         <q-toolbar-title>SaveDatMoney</q-toolbar-title>
-
-        <div><a href="https://github.com/CheIIau/savedatmoney">
+        <header-tabs
+          class="header-tabs-lg"
+          :page-links="pageLinks"
+        ></header-tabs>
+        <div>
+          <a href="https://github.com/CheIIau/savedatmoney">
             <img
               src="../assets/github-logo.svg"
               alt="github_logo"
               class="github-logo"
             >
-          </a></div>
+          </a>
+        </div>
       </q-toolbar>
+      <header-tabs
+        class="header-tabs-md"
+        :page-links="pageLinks"
+      ></header-tabs>
     </q-header>
 
     <q-drawer
@@ -30,35 +40,8 @@
       <q-list>
         <q-item-label header>SaveDatMoney</q-item-label>
 
-        <PageLink
-          v-for="link in pageLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-        <q-item
-          v-if="isUserAuth"
-          clickable
-          @click="onLogout"
-        >
-          <q-item-section avatar>
-            <q-icon name="logout" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Выйти из аккаунта</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item
-          v-if="!isUserAuth"
-          clickable
-          to="/registration"
-        >
-          <q-item-section avatar>
-            <q-icon name="how_to_reg" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Регистрация/Вход</q-item-label>
-          </q-item-section>
-        </q-item>
+        <PageLink :page-links="pageLinks" />
+
       </q-list>
     </q-drawer>
 
@@ -81,18 +64,19 @@
 
 <script setup lang="ts">
 import PageLink from 'src/components/PageLink.vue';
+import HeaderTabs from 'src/components/HeaderTabs.vue';
 import { ref, computed, onBeforeMount } from 'vue';
 import { SharedGetters } from 'src/store/shared/getters';
 import { useStore } from 'src/store';
 import { SharedActions } from 'src/store/shared/actions';
 import { SharedMutations } from 'src/store/shared/mutations';
-import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
-
+//this.deviceWidth = window.innerWidth; but i choose to use media queries 
 const $q = useQuasar();
+
 const store = useStore();
 const isUserAuth = computed(() => store.getters[SharedGetters.isUserAuth]);
-const router = useRouter();
+
 const pageLinks = [
   {
     title: 'Главная страница',
@@ -111,11 +95,6 @@ const pageLinks = [
   },
 ];
 
-const darkMode = localStorage.getItem('dark');
-if (darkMode === 'true') {
-  $q.dark.set(true)
-}
-
 const leftDrawerOpen = ref(false);
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -129,12 +108,9 @@ if (!isUserAuth.value) {
   });
 }
 
-async function onLogout() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('userId');
-  localStorage.removeItem('username');
-  store.commit(SharedMutations.setUserAuthFlag, false);
-  await router.push('/');
+const darkMode = localStorage.getItem('dark');
+if (darkMode === 'true') {
+  $q.dark.set(true);
 }
 
 function toggleDarkMode() {
@@ -148,9 +124,29 @@ function toggleDarkMode() {
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .github-logo {
   max-width: 30px;
+}
+
+.header-tabs-lg {
+  @media (max-width:1134px) {
+    display: none;
+  }
+}
+
+.header-tabs-md {
+  display: none;
+
+  @media (min-width:756px) and (max-width:1134px) {
+    display: flex;
+  }
+}
+
+.drawer-button {
+  @media (min-width:756px) {
+    display: none;
+  }
 }
 
 .dark-mode {

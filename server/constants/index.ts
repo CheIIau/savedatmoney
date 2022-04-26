@@ -1,4 +1,3 @@
-export const mongoUri =
-  'mongodb+srv://CheIIau:KNMd2g4yAZqzw5x@clusterdb.6eqee.mongodb.net/savethatmoney?retryWrites=true&w=majority';
-export const jwtAccessSecretKey = 'someKey';
-export const jwtRefreshSecretKey = 'otherKey';
+export const mongoUri = process.env.MONGO_URI;
+export const jwtAccessSecretKey = process.env.JWT_ACCESS_SECRET_KEY;
+export const jwtRefreshSecretKey = process.env.JWT_REFRESH_SECRET_KEY;

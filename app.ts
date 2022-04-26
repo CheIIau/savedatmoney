@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import cors from 'cors';
 import history from 'connect-history-api-fallback';
+import 'dotenv/config';
 import { connect } from 'mongoose';
 import { graphqlHTTP } from 'express-graphql';
 import { Schema } from './server/schema';
@@ -31,7 +32,7 @@ app.get('*', (req, res) => {
 
 async function start() {
   try {
-    await connect(mongoUri);
+    await connect(mongoUri!);
     console.log('succesfully connected to DB');
   } catch (e) {
     console.log('Server Error', e);

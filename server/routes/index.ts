@@ -13,7 +13,10 @@ interface requestRegisterBody {
   password: string;
 }
 
-router.post('/register', body('password').isLength({ min: 6 }), (async (req: Request, res: Response) => {
+router.post('/register', body('password').isLength({ min: 6 }), (async (
+  req: Request,
+  res: Response,
+) => {
   try {
     const errors = validationResult(req);
     const { username, password } = req.body as requestRegisterBody;
@@ -27,7 +30,9 @@ router.post('/register', body('password').isLength({ min: 6 }), (async (req: Req
     const existingUser = await UserDataModel.findOne({ username });
 
     if (existingUser) {
-      return res.status(400).json({ message: 'Пользователь с таким ником уже существует' });
+      return res
+        .status(400)
+        .json({ message: 'Пользователь с таким ником уже существует' });
     }
     const hashedPassword = await hash(password, 6);
     const user = new UserDataModel({ username, password: hashedPassword });
@@ -40,7 +45,10 @@ router.post('/register', body('password').isLength({ min: 6 }), (async (req: Req
   }
 }) as RequestHandler);
 
-router.post('/login', body('password').isLength({ min: 6 }), (async (req: Request, res: Response) => {
+router.post('/login', body('password').isLength({ min: 6 }), (async (
+  req: Request,
+  res: Response,
+) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -52,7 +60,9 @@ router.post('/login', body('password').isLength({ min: 6 }), (async (req: Reques
     const { username, password } = req.body as requestRegisterBody;
     const user = await UserDataModel.findOne({ username });
     if (!user) {
-      return res.status(400).json({ message: 'Нет пользователя с таким ником' });
+      return res
+        .status(400)
+        .json({ message: 'Нет пользователя с таким ником' });
     }
 
     const isMatch = await compare(password, user.password);
@@ -60,9 +70,19 @@ router.post('/login', body('password').isLength({ min: 6 }), (async (req: Reques
       return res.status(400).json({ message: 'Неверный пароль' });
     }
 
-    const accessToken = sign({ userId: user.id as string }, jwtAccessSecretKey, { expiresIn: '5d' });
+    const accessToken = sign(
+      { userId: user.id as string },
+      jwtAccessSecretKey!,
+      { expiresIn: '5d' },
+    );
 
-    res.status(200).json({ message: 'Вы вошли в аккаунт', token: accessToken, userId: user.id as string });
+    res
+      .status(200)
+      .json({
+        message: 'Вы вошли в аккаунт',
+        token: accessToken,
+        userId: user.id as string,
+      });
   } catch (e) {
     res.status(500).json({ message: 'Что-то пошло не так' });
   }
@@ -75,8 +95,18 @@ router.get('/auth', verifyToken, async (req: Request, res: Response) => {
     if (!user) {
       return res.status(400).json({ message: 'Не удалось авторизоваться' });
     }
-    const accessToken = sign({ userId: user.id as string }, jwtAccessSecretKey, { expiresIn: '5d' });
-    res.status(200).json({ message: 'Вы вошли в аккаунт', token: accessToken, userId: user.id as string });
+    const accessToken = sign(
+      { userId: user.id as string },
+      jwtAccessSecretKey!,
+      { expiresIn: '5d' },
+    );
+    res
+      .status(200)
+      .json({
+        message: 'Вы вошли в аккаунт',
+        token: accessToken,
+        userId: user.id as string,
+      });
   } catch (e) {
     res.status(500).json({ message: 'Что-то пошло не так' });
   }
