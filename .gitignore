@@ -33,5 +33,5 @@ yarn-error.log*
 *.sln
 app.js
 app.js.map
-/server/*/*.js
+/server/*/*.js*
 .env
