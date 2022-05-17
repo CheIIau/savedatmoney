@@ -8,7 +8,10 @@ Backend uses Express and Express-Graphql.
 Authentication using JWT
 
 The video below showing site features
-https://user-images.githubusercontent.com/58114735/168884893-787c28f1-e182-4a74-86d1-acdc8a8f69e4.mp4
+
+https://user-images.githubusercontent.com/58114735/168885701-025d0d0b-f177-4f2f-9f7b-3088193bfb36.mp4
+
+
 
 
 
