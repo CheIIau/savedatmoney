@@ -1,4 +1,4 @@
-# SaveDatMoney (savedatmoney)
+# SaveDatMoney
 
 App that you can help you save your money or at least count your expensies
 ### [The link](https://savedatmoney.herokuapp.com/) (may take a while to load)
